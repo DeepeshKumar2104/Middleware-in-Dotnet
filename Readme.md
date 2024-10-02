@@ -1,3 +1,84 @@
+Haan, bilkul! ASP.NET Core applications me middleware ko configure karne ke liye sab kuch `Program.cs` file me kiya jaata hai. ASP.NET Core 6 aur uske baad ke versions me, application ka structure thoda simplify kiya gaya hai, jahan `Startup.cs` file ko `Program.cs` me integrate kiya gaya hai.
+
+### Example of `Program.cs` File
+
+Yahaan par ek simple example hai `Program.cs` file ka, jisme saare commonly used middleware components include kiye gaye hain:
+
+```csharp
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddControllers(); // Controllers ko register karte hain
+builder.Services.AddSession(); // Session ko enable karte hain
+builder.Services.AddCors(); // CORS ko enable karte hain
+builder.Services.AddAuthentication(); // Authentication services ko add karte hain
+builder.Services.AddAuthorization(); // Authorization services ko add karte hain
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage(); // Development environment ke liye error page
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error"); // Production me error handling
+    app.UseHsts(); // HSTS ko enable karte hain
+}
+
+app.UseHttpsRedirection(); // HTTP ko HTTPS me redirect karte hain
+app.UseStaticFiles(); // Static files ko serve karte hain
+
+app.UseRouting(); // Routing ko enable karte hain
+
+app.UseAuthentication(); // User authentication ko check karte hain
+app.UseAuthorization(); // User authorization ko check karte hain
+
+app.UseCors(policy =>
+    policy.AllowAnyOrigin()
+          .AllowAnyMethod()
+          .AllowAnyHeader()); // CORS ko configure karte hain
+
+app.UseSession(); // Session management ko enable karte hain
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers(); // API controllers ko map karte hain
+});
+
+app.Run(); // Application ko run karte hain
+```
+
+### Explanation:
+
+- **Builder Configuration:**
+  - `builder.Services.AddControllers();`: Controllers ko register karta hai.
+  - `builder.Services.AddSession();`: Session state ko enable karta hai.
+  - `builder.Services.AddCors();`: CORS ko enable karta hai.
+  - `builder.Services.AddAuthentication();`: Authentication services ko add karta hai.
+  - `builder.Services.AddAuthorization();`: Authorization services ko add karta hai.
+
+- **Middleware Pipeline:**
+  - `app.UseHttpsRedirection();`: HTTP requests ko HTTPS me redirect karta hai.
+  - `app.UseStaticFiles();`: Static files (CSS, JS, images) ko serve karta hai.
+  - `app.UseRouting();`: Routing ko enable karta hai.
+  - `app.UseAuthentication();`: Authentication ko check karta hai.
+  - `app.UseAuthorization();`: Authorization ko check karta hai.
+  - `app.UseCors()`: CORS policies ko configure karta hai.
+  - `app.UseSession();`: Session management ko enable karta hai.
+  - `app.UseEndpoints(...)`: Controllers ko map karta hai.
+
+### Summary
+Is tarike se tum saare middleware ko `Program.cs` me configure kar sakte ho, jisse tumhara application ka structure clean aur readable hota hai. Ye middleware request processing pipeline ka part hote hain aur har ek middleware apne specific role ko play karta hai.
+
+Agar tumhe koi aur specific middleware ya configuration detail chahiye, toh bata sakte ho!
+
 Middleware order aur execution ASP.NET Core applications me bahut important hota hai. Iska sahi samajhna zaroori hai kyunki ye request processing ke flow ko determine karta hai. Toh chalo, hum in sab topics ko detail me samjhte hain.
 
 ## Middleware Order and Execution
